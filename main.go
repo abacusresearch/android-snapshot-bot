@@ -11,6 +11,8 @@ import (
 type Notification struct {
     Branch string `json:"branch"`
     Commits []string `json:"commits"`
+    PullRequest string `json:"pullRequest"`
+    PullRequestBranch string `json:"pullRequestBranch"`
     Repository string `json:"repository"`
     Urls []string `json:"urls"`
 }
@@ -54,7 +56,15 @@ func serveNotifications(response http.ResponseWriter, request *http.Request) {
         panic(err)
     }
 
-    postSlackMessage("There is a new *%s* build for *%s*:", notification.Branch, notification.Repository)
+    if notification.PullRequest == "" {
+        postSlackMessage(
+            "%s! We've built *%s@%s*:",
+            getAcclamation(), notification.Repository, notification.Branch)
+    } else {
+        postSlackMessage(
+            "%s! We've built pull request *%s* for *%s@%s*:",
+            getAcclamation(), notification.PullRequest, notification.Repository, notification.PullRequestBranch)
+    }
 
     for _, commit := range notification.Commits {
         postSlackMessage(commit)
