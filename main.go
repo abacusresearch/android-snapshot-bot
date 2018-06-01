@@ -41,6 +41,13 @@ func serve() {
 }
 
 func serveNotifications(response http.ResponseWriter, request *http.Request) {
+    serviceUser, servicePassword, _ := request.BasicAuth()
+
+    if serviceUser != getConfig("SERVICE_USER") || servicePassword != getConfig("SERVICE_PASSWORD") {
+        response.WriteHeader(401)
+        return
+    }
+
     var notification Notification
 
     notificationData, err := ioutil.ReadAll(request.Body)
