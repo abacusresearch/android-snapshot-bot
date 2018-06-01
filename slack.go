@@ -65,6 +65,6 @@ func postSlackMessage(message string, arguments ...interface{}) {
             slack.NewPostMessageParameters())
 
     if err != nil {
-        log.Fatalf("Sorry, I cannot post the message: %v", err)
+        panic(err)
     }
 }
