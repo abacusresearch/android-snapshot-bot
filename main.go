@@ -56,6 +56,8 @@ func serveNotifications(response http.ResponseWriter, request *http.Request) {
         panic(err)
     }
 
+    postSlackMessage(":checkered_flag:")
+
     if notification.PullRequest == "" {
         postSlackMessage(
             "%s! We've built *%s@%s*:",
