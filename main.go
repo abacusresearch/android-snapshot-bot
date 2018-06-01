@@ -2,6 +2,7 @@ package main
 
 import (
     "encoding/json"
+    "fmt"
     "github.com/gorilla/mux"
     "io/ioutil"
     "log"
@@ -56,23 +57,25 @@ func serveNotifications(response http.ResponseWriter, request *http.Request) {
         panic(err)
     }
 
-    postSlackMessage(":checkered_flag:")
+    result := fmt.Sprintf("%s! ", getAcclamation())
 
     if notification.PullRequest == "" {
-        postSlackMessage(
-            "%s! We've built *%s@%s*:",
-            getAcclamation(), notification.Repository, notification.Branch)
+        result += fmt.Sprintf(
+            "We've built *%s@%s*:",
+            notification.Repository, notification.Branch)
     } else {
-        postSlackMessage(
-            "%s! We've built pull request *%s* for *%s@%s*:",
-            getAcclamation(), notification.PullRequest, notification.Repository, notification.PullRequestBranch)
+        result += fmt.Sprintf(
+            "We've built pull request *%s* for *%s@%s*:",
+            notification.PullRequest, notification.Repository, notification.PullRequestBranch)
     }
 
     for _, commit := range notification.Commits {
-        postSlackMessage(commit)
+        result += "\n" + commit
     }
 
     for _, url := range notification.Urls {
-        postSlackMessage(url)
+        result += "\n:package: " + url
     }
+
+    postSlackMessage(result)
 }
