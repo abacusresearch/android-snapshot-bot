@@ -76,8 +76,14 @@ func serveNotifications(response http.ResponseWriter, request *http.Request) {
             notification.PullRequest, notification.Repository, notification.PullRequestBranch)
     }
 
-    for _, commit := range notification.Commits {
-        result += "\n" + commit
+    commits := len(notification.Commits)
+
+    for index, commit := range notification.Commits {
+        if commits < 6 || index < 2 || index > commits - 3 {
+            result += "\n" + commit
+        } else if index == 2 {
+            result += "\n···"
+        }
     }
 
     for _, url := range notification.Urls {
