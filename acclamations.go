@@ -4,9 +4,11 @@ import "math/rand"
 
 var acclamations = []string {
     "Bazinga",
-    "Boo-ya",
+    "Boo-yah",
+    "Cowabunga"
     "Hooray",
     "Woo-hoo",
+    "Yabba-dabba-doo",
     "Yay",
     "Yee-haw",
     "Yippee"}
