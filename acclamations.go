@@ -5,7 +5,7 @@ import "math/rand"
 var acclamations = []string {
     "Bazinga",
     "Boo-yah",
-    "Cowabunga"
+    "Cowabunga",
     "Hooray",
     "Woo-hoo",
     "Yabba-dabba-doo",
