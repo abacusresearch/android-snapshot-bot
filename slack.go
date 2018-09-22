@@ -58,11 +58,44 @@ func handleSlackMessages() {
     }
 }
 
-func postSlackMessage(message string, arguments ...interface{}) {
+func postSlackMessage(message string) {
     _, _, err := rtm.PostMessage(
             getConfig("SLACK_BOT_CHANNEL_ID"),
-            fmt.Sprintf(message, arguments...),
+            message,
             slack.NewPostMessageParameters())
+
+    if err != nil {
+        panic(err)
+    }
+}
+
+func postSlackMessageWithAttachments(message string, attachedText string, attachedUrls []string) {
+    var attachments []slack.Attachment
+
+    for _, attachedUrl := range attachedUrls {
+        attachment := slack.Attachment {
+            Actions: []slack.AttachmentAction {
+                slack.AttachmentAction {
+                    Name: "download",
+                    Text: ":package: Download",
+                    Type: "button",
+                    URL: attachedUrl,
+                },
+            },
+            Text: attachedText,
+        }
+
+        attachments = append(attachments, attachment)
+    }
+
+    parameters := slack.NewPostMessageParameters()
+
+    parameters.Attachments = attachments
+
+    _, _, err := rtm.PostMessage(
+            getConfig("SLACK_BOT_CHANNEL_ID"),
+            message,
+            parameters)
 
     if err != nil {
         panic(err)

@@ -64,31 +64,36 @@ func serveNotifications(response http.ResponseWriter, request *http.Request) {
         panic(err)
     }
 
-    result := fmt.Sprintf("%s! ", getAcclamation())
+    message := fmt.Sprintf("%s! ", getAcclamation())
 
     if notification.PullRequest == "" {
-        result += fmt.Sprintf(
-            "We've built *%s@%s*:",
+        message += fmt.Sprintf(
+            "We've built *%s@%s*.",
             notification.Repository, notification.Branch)
     } else {
-        result += fmt.Sprintf(
-            "We've built pull request *%s* for *%s@%s*:",
+        message += fmt.Sprintf(
+            "We've built pull request *%s* for *%s@%s*.",
             notification.PullRequest, notification.Repository, notification.PullRequestBranch)
     }
 
     commits := len(notification.Commits)
 
+    attachedText := ""
+    attachedUrls := notification.Urls
+
+    if commits > 4 {
+        attachedText += "···"
+    }
+
     for index, commit := range notification.Commits {
-        if commits < 6 || index < 2 || index > commits - 3 {
-            result += "\n" + commit
-        } else if index == 2 {
-            result += "\n···"
+        if index > commits - 5 {
+            if len(attachedText) != 0 {
+                attachedText += "\n"
+            }
+
+            attachedText += commit
         }
     }
 
-    for _, url := range notification.Urls {
-        result += "\n:package: " + url
-    }
-
-    postSlackMessage(result)
+    postSlackMessageWithAttachments(message, attachedText, attachedUrls)
 }
